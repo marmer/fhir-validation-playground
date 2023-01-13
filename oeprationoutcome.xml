@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<OperationOutcome xmlns="http://hl7.org/fhir">
+  <text>
+    <status value="extensions"/>
+    <div xmlns="http://www.w3.org/1999/xhtml">
+      <table class="grid">
+        <tr>
+          <td>
+            <b>Severity</b>
+          </td>
+          <td>
+            <b>Location</b>
+          </td>
+          <td>
+            <b>Code</b>
+          </td>
+          <td>
+            <b>Details</b>
+          </td>
+          <td>
+            <b>Diagnostics</b>
+          </td>
+          <td>
+            <b>Source</b>
+          </td>
+        </tr>
+        <tr>
+          <td>ERROR</td>
+          <td/>
+          <td>Structural Issue</td>
+          <td>URL-Wert &quot;http://terminology.hl7.org/CodeSystem/Blubba&quot; löst nicht auf</td>
+          <td/>
+          <td>No display for Extension</td>
+        </tr>
+        <tr>
+          <td>INFORMATION</td>
+          <td/>
+          <td>Unknown User</td>
+          <td>Code System URI &quot;http://terminology.hl7.org/CodeSystem/Blubba&quot; ist unbekannt, so dass der Code nicht validiert werden kann</td>
+          <td/>
+          <td>No display for Extension</td>
+        </tr>
+        <tr>
+          <td>WARNING</td>
+          <td/>
+          <td>Invalid Code</td>
+          <td>Keiner der angegebenen Codes ist im Valueset 'IdentifierType' (http://hl7.org/fhir/ValueSet/identifier-type|4.0.1), und ein Code sollte aus diesem Valueset stammen, es sei denn, er enthält keinen geeigneten Code) (Codes = http://terminology.hl7.org/CodeSystem/Blubba#MR)</td>
+          <td/>
+          <td>No display for Extension</td>
+        </tr>
+      </table>
+    </div>
+  </text>
+  <extension url="http://hl7.org/fhir/StructureDefinition/operationoutcome-file">
+    <valueString value="C:\Users\mariano.mertinat\IdeaProjects\fhir-validation-spike\target\classes\invalidRessourcePatient.xml"/>
+  </extension>
+  <issue>
+    <extension url="http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-line">
+      <valueInteger value="40"/>
+    </extension>
+    <extension url="http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col">
+      <valueInteger value="71"/>
+    </extension>
+    <extension url="http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-source">
+      <valueCode value="InstanceValidator"/>
+    </extension>
+    <extension url="http://hl7.org/fhir/StructureDefinition/operationoutcome-message-id">
+      <valueCode value="Type_Specific_Checks_DT_URL_Resolve"/>
+    </extension>
+    <severity value="error"/>
+    <code value="structure"/>
+    <details>
+      <text value="URL-Wert &quot;http://terminology.hl7.org/CodeSystem/Blubba&quot; löst nicht auf"/>
+    </details>
+    <expression value="Patient.identifier[0].type.coding[0].system"/>
+  </issue>
+  <issue>
+    <extension url="http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-line">
+      <valueInteger value="39"/>
+    </extension>
+    <extension url="http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col">
+      <valueInteger value="15"/>
+    </extension>
+    <extension url="http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-source">
+      <valueCode value="InstanceValidator"/>
+    </extension>
+    <extension url="http://hl7.org/fhir/StructureDefinition/operationoutcome-message-id">
+      <valueCode value="Terminology_TX_System_NotKnown"/>
+    </extension>
+    <severity value="information"/>
+    <code value="unknown"/>
+    <details>
+      <text value="Code System URI &quot;http://terminology.hl7.org/CodeSystem/Blubba&quot; ist unbekannt, so dass der Code nicht validiert werden kann"/>
+    </details>
+    <expression value="Patient.identifier[0].type.coding[0]"/>
+  </issue>
+  <issue>
+    <extension url="http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-line">
+      <valueInteger value="38"/>
+    </extension>
+    <extension url="http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col">
+      <valueInteger value="11"/>
+    </extension>
+    <extension url="http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-source">
+      <valueCode value="TerminologyEngine"/>
+    </extension>
+    <extension url="http://hl7.org/fhir/StructureDefinition/operationoutcome-message-id">
+      <valueCode value="Terminology_TX_NoValid_2_CC"/>
+    </extension>
+    <severity value="warning"/>
+    <code value="code-invalid"/>
+    <details>
+      <text value="Keiner der angegebenen Codes ist im Valueset 'IdentifierType' (http://hl7.org/fhir/ValueSet/identifier-type|4.0.1), und ein Code sollte aus diesem Valueset stammen, es sei denn, er enthält keinen geeigneten Code) (Codes = http://terminology.hl7.org/CodeSystem/Blubba#MR)"/>
+    </details>
+    <expression value="Patient.identifier[0].type"/>
+  </issue>
+</OperationOutcome>

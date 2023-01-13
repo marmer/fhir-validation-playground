@@ -5,14 +5,24 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import io.github.marmer.fhir.FhirValidatorByApi.Issue.Type;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class FhirValidatorByApiTest {
 
-  private final FhirValidatorByApi underTest = new FhirValidatorByApi();
+  private static FhirValidatorByApi underTest;
+
+  @SneakyThrows
+  @BeforeAll
+  static void setUpAll() {
+    final var additionalRessourcesAsPath = Paths.get(
+        FhirValidatorByApiTest.class.getResource("/fhirpackages").toURI());
+    underTest = new FhirValidatorByApi(additionalRessourcesAsPath);
+  }
 
   @Test
   @DisplayName("Invalid xml resource violating the base profile should be recognized as invalid")
@@ -26,21 +36,65 @@ class FhirValidatorByApiTest {
 
     // Assertion
     assertThat(
-        result.issues()).extracting("type", "message"/*, // TODO: marmer 10.01.2023 "message"*/)
+        result.issues()).extracting("type", "message")
         .asList()
         .containsExactlyInAnyOrder(
             tuple(Type.WARNING,
-                // TODO: marmer 10.01.2023 Erwartbare Message angeben oder zumindest line und column!
-                "hier eine sinnvolle erwartete Message angeben")
+                "Keiner der angegebenen Codes ist im Valueset 'IdentifierType' (http://hl7.org/fhir/ValueSet/identifier-type), und ein Code sollte aus diesem Valueset stammen, es sei denn, er enthält keinen geeigneten Code) (Codes = http://terminology.hl7.org/CodeSystem/Blubba#MR)")
         );
   }
 
   @Test
-  @DisplayName("Should serve no result on valid resources")
+  @DisplayName("Should serve no result on valid xml resources")
   @SneakyThrows
-  void validate_ShouldServeNoResultOnValidResources() {
+  void validate_ShouldServeNoResultOnValidXmlResources() {
     // Preparation
     final var resourceToValidate = ressource("/validRessourcePatient.xml");
+
+    // Execution
+    final var result = underTest.validate(resourceToValidate);
+
+    // Assertion
+    assertThat(result.issues()).isEmpty();
+  }
+
+  @Test
+  @DisplayName("Should serve no result on valid profile xml resources")
+  @SneakyThrows
+  void validate_ShouldServeNoResultOnValidProfileXmlResources() {
+    // Preparation
+    final var resourceToValidate = ressource("/validRessourceWithProfile.xml");
+
+    // Execution
+    final var result = underTest.validate(resourceToValidate);
+
+    // Assertion
+    assertThat(result.issues()).isEmpty();
+  }
+
+  @Test
+  @DisplayName("Should serve info on valid xml resources with extension")
+  @SneakyThrows
+  void validate_ShouldServeInfoOnValidXmlResourcesWithExtension() {
+    // Preparation
+    final var resourceToValidate = ressource("/validRessourcePatientWithRandomExtension.xml");
+
+    // Execution
+    final var result = underTest.validate(resourceToValidate);
+
+    // Assertion
+    assertThat(
+        result.issues()).extracting("type")
+        .asList()
+        .containsOnly(Type.INFO);
+  }
+
+  @Test
+  @DisplayName("Should serve no result on valid json resources")
+  @SneakyThrows
+  void validate_ShouldServeNoResultOnValidJsonResources() {
+    // Preparation
+    final var resourceToValidate = ressource("/validRessourcePatient.json");
 
     // Execution
     final var result = underTest.validate(resourceToValidate);
@@ -61,13 +115,27 @@ class FhirValidatorByApiTest {
 
     // Assertion
     assertThat(
-        result.issues()).extracting("type", "message")
+        result.issues())
+        .extracting("type")
         .asList()
-        .containsExactlyInAnyOrder(
-            tuple(Type.ERROR,
-                "cvc-enumeration-valid: Wert 'shouldNotBeHere' ist nicht Facet-gültig in Bezug auf Enumeration '[usual, official, temp, secondary, old]'. Er muss ein Wert aus der Enumeration sein."),
-            tuple(Type.ERROR,
-                "cvc-attribute.3: Wert 'shouldNotBeHere' des Attributs 'value' bei Element 'use' hat keinen gültigen Typ 'IdentifierUse-list'."));
+        .containsOnly(Type.ERROR, Type.WARNING);
+  }
+
+  @Test
+  @DisplayName("Malformed xml resource of patient profile should be recognized as invalid")
+  @SneakyThrows
+  void validate_MalformedXmlResourceOfPatientProfileShouldBeRecognizedAsInvalid() {
+    // Preparation
+    final var resourceToValidate = ressource("/invalidRessourcePatientMalformed.xml");
+
+    // Execution
+    final var result = underTest.validate(resourceToValidate);
+
+    // Assertion
+    assertThat(
+        result.issues()).extracting("type")
+        .asList()
+        .containsOnly(Type.FATAL);
   }
 
   @SneakyThrows
@@ -77,22 +145,6 @@ class FhirValidatorByApiTest {
         FhirValidationByCLI.class.getResource(ressourcePath).toURI());
   }
 
-  // TODO: marmer 10.01.2023 Errors?
-  // TODO: marmer 10.01.2023 Warnings?
-  // TODO: marmer 10.01.2023 Fatal?
-
-  // TODO: marmer 10.01.2023 External Reference Issues?
-  // TODO: marmer 10.01.2023 External Extension issues?
-  //  Is here a difference to Profile?
-
-  // TODO: marmer 10.01.2023 External Profile issues? (maybe they don't matter here)
-
-  // TODO: marmer 10.01.2023 External Code-System issues?
-
-  // TODO: marmer 10.01.2023 External transitive Reference Issues?
-  // TODO: marmer 10.01.2023 External transitive Extension issues?
-  // TODO: marmer 10.01.2023 External transitive Profile issues? (maybe they don't matter here)
-  // TODO: marmer 10.01.2023 External transitive Code-System issues?
-
-  // TODO: marmer 10.01.2023 External Resources? Are they relevant? Because the client would load them anyway, won't it?
+  // TODO: marmer 11.01.2023 Profil oder Bundleangabe für vorherigen Download oder zum lokal hinpacken oder oder oder. Nachdenken ;)
+  // TODO: marmer 12.01.2023 den ganzen Spaß hinter einem Proxy ausführen!!!
 }
