@@ -69,7 +69,9 @@ class FhirValidatorByApiTest {
     final var result = underTest.validate(resourceToValidate);
 
     // Assertion
-    assertThat(result.issues()).isEmpty();
+    assertThat(result.issues())
+        .withFailMessage(result::toString)
+        .isEmpty();
   }
 
   @Test
